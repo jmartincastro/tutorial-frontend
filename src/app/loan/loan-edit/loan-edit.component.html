@@ -1,0 +1,51 @@
+<div class="container">
+    <h1 *ngIf="loan.id == null">Crear préstamo</h1>
+    <h1 *ngIf="loan.id != null">Modificar préstamo</h1>
+
+    <form>
+        <mat-form-field>
+            <mat-label>Identificador</mat-label>
+            <input type="text" matInput placeholder="Identificador" [(ngModel)]="loan.id" name="id" disabled>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Cliente</mat-label>
+            <mat-select disableRipple [(ngModel)]="loan.client" name="client" required>
+                <mat-option *ngFor="let client of clients" [value]="client">{{client.name}}</mat-option>
+            </mat-select>
+            <mat-error>El cliente no puede estar vacío</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Título</mat-label>
+            <mat-select disableRipple [(ngModel)]="loan.game" name="game" required>
+                <mat-option *ngFor="let game of games" [value]="game">{{game.title}}</mat-option>
+            </mat-select>
+            <mat-error>El título no puede estar vacío</mat-error>
+        </mat-form-field>
+
+        <div [formGroup]="daterForm">
+            <mat-form-field>
+                <mat-label>Fechas préstamo</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate placeholder="Fecha inicio" formControlName="start" [value]="loan.startDate" [(ngModel)]="loan.startDate"
+                        (dateInput)="inputStartDateEvent($event)" (dateChange)="changeStartDateEvent($event)">
+                    <input matEndDate placeholder="Fecha fin" formControlName="end" [value]="loan.endDate" [(ngModel)]="loan.endDate"
+                        (dateInput)="inputEndDateEvent($event)" (dateChange)="changeEndDateEvent($event)">
+                </mat-date-range-input>
+                <mat-hint>DD/MM/YYYY - DD/MM/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+                <mat-error *ngIf="hasError('start', 'required')">La fecha inicio es requerida</mat-error>
+                <mat-error *ngIf="hasError('end', 'required')">La fecha fin es requerida</mat-error>
+                <mat-error *ngIf="hasErrorForm('maxDaysLoan')">El periodo de préstamo máximo solo puede ser de 14 días</mat-error>
+                <mat-error *ngIf="hasErrorForm('invalidRange')">La fecha de fin NO puede ser anterior a la fecha de inicio</mat-error>
+            </mat-form-field>
+        </div>
+    </form>
+
+    <div class="buttons">
+        <button mat-stroked-button (click)="onClose()">Cerrar</button>
+        <button mat-flat-button color="primary" (click)="onSave()">Guardar</button>
+    </div>
+</div>
